@@ -15,16 +15,16 @@ class CreateReimbursementsTable extends Migration
     {
         Schema::create('reimbursements', function (Blueprint $table) {
             $table->id();
-            $table->string('id_user',20);
+            $table->string('id_user', 20);
             $table->enum('kategori', ['perjalanan', 'medis', 'operasional']);
             // $table->text('deskripsi');
             // $table->integer('jumlah');
-            $table->string('bukti');
+            $table->string('bukti')->nullable();
             $table->date('from');
             $table->date('to');
             $table->enum('status', ['waiting', 'accepted', 'declined', 'claimed']);
             $table->timestamps();
-            
+
             $table->foreign('id_user')->references('nip')->on('users');
         });
     }
