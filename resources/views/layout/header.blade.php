@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image" href="/assets/image/logo.png">
+    <link rel="icon" type="image" href="{{ asset('/assets/image/logo.png') }}">
     <title>@yield('title')</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/addition.css">
-    <link href='/assets/boxicons/css/boxicons.min.css' rel='stylesheet'>
-    <link href="/assets/css/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
-    <script src="/assets/css/vanilla-dataTables.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="{{ asset('/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/addition.css') }}">
+    <link href="{{ asset('/assets/boxicons/css/boxicons.min.css') }}" rel='stylesheet'>
+    <link href="{{ asset('/assets/css/vanilla-dataTables.min.css') }}" rel="stylesheet" type="text/css">
+    <script src="{{ asset('/assets/css/vanilla-dataTables.min.js') }}" type="text/javascript"></script>
 </head>
 
 <body style="display: flex;flex-wrap: wrap;overflow-x: hidden;">
@@ -19,7 +19,7 @@
 
 
         <div id="head">
-            <img src="/assets/image/logo.png" alt="" id="logo">
+            <img src="{{ asset('/assets/image/logo.png') }}" alt="" id="logo">
             <hr>
 
             @yield('nav-menu')
@@ -32,7 +32,7 @@
             </div>
 
         </div>
-        <a href="/logout">
+        <a href="{{ route('logout') }}">
             <button class="btn">
                 <i class="bx bx-log-out"></i>
                 <span>Keluar</span>

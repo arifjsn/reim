@@ -4,58 +4,34 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReimbursementController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
+// Redirect root to login
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect()->route('login');
 });
 
-Route::get('/login', [AuthController::class, 'index'] )->name('login')->middleware('guest');
-Route::post('/login', [AuthController::class, 'authenticate'] );
-Route::get('/logout', [AuthController::class, 'logout'] );
+// Auth routes
+Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'authenticate'])->name('login.process');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/home', [HomeController::class, 'index'] )->middleware('auth');
+// Home
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
-/* 
-*  Menampilkan View halaman reimbursement
-*  Terdapat validasi departemen di dalamnya
-*/
-Route::get('/reimbursement', [ReimbursementController::class, 'index'] )->middleware('auth');
+// Reimbursement routes
+Route::middleware('auth')->group(function () {
+    Route::get('/reimbursement', [ReimbursementController::class, 'index'])->name('reimbursement.index');
+    Route::get('/reimbursement/{id}', [ReimbursementController::class, 'claimFormFilled'])->name('reimbursement.detail');
+});
 
-/* 
-*  Menampilkan View form input reimbursement
-*  Form input claim hanya boleh digunakan selain HR dan Finance 
-*/
-Route::get('/claim', [ReimbursementController::class, 'claimForm'] )->middleware('auth', 'department:PEGAWAI');
+// Claim routes (only for PEGAWAI)
+Route::middleware(['auth', 'department:PEGAWAI'])->group(function () {
+    Route::get('/claim', [ReimbursementController::class, 'claimForm'])->name('claim.form');
+    Route::post('/claim', [ReimbursementController::class, 'claim'])->name('claim.submit');
+    Route::post('/cancelClaim', [ReimbursementController::class, 'cancelClaim'])->name('claim.cancel');
+});
 
-/* 
-*  Fungsi menambah data reimbursement
-*  Fungsi claim hanya boleh digunakan selain HR dan Finance
-*/
-Route::post('/claim', [ReimbursementController::class, 'claim'] )->middleware('auth', 'department:PEGAWAI');
-
-/* 
-*  Menampilkan View detail reimbursement
-*  Terdapat validasi departemen di dalamnya
-*/
-Route::get('/reimbursement/{id}', [ReimbursementController::class, 'claimFormFilled'] )->middleware('auth');
-
-
-/* 
-*  Dapat digunakan HR untuk menerima / tolak reimbursement
-*  Dapat digunakan FINANCE untuk mengubah status menjadi claimed
-*  Fungsi updateStatus boleh digunakan HR & FINANCE
-*/
-Route::post('/updateStatus', [ReimbursementController::class, 'updateStatus'] )->middleware('auth', 'department:HR,FINANCE' );
-
-
-Route::post('/cancelClaim', [ReimbursementController::class, 'cancelClaim'] )->middleware('auth', 'department:PEGAWAI' );
+// Update status (HR & FINANCE)
+Route::post('/updateStatus', [ReimbursementController::class, 'updateStatus'])
+    ->name('reimbursement.updateStatus')
+    ->middleware(['auth', 'department:HR,FINANCE']);

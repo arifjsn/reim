@@ -4,13 +4,13 @@
 
 @section('nav-menu')
 <nav>
-    <a href="/home">
+    <a href="{{ route('home') }}">
         <div class="nav-item">
             <i class='bx bx-home'></i>
             <span>Home</span>
         </div>
     </a>
-    <a href="/reimbursement">
+    <a href="{{ route('reimbursement.index') }}">
         <div class="nav-item on-page">
             <i class="bx icon-gui-refund"></i>
             <span>Reimbursement</span>
@@ -37,7 +37,7 @@
     <section class="main-content shadow section-cards">
 
         <div class="content-head">
-            <a href="/reimbursement">
+            <a href="{{ route('reimbursement.index') }}">
                 <button class="btn">
                     <i class="bx bx-left-arrow-circle"></i>
                     <span>Kembali</span>
@@ -55,7 +55,7 @@
             </ul>
         </div>
         @endif
-        <form action="/claim" method="post" enctype="multipart/form-data">
+        <form action="{{ route('claim.submit') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="form-row">
 

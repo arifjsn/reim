@@ -4,13 +4,13 @@
 
 @section('nav-menu')
 <nav>
-    <a href="/home">
+    <a href="{{ route('home') }}">
         <div class="nav-item">
             <i class='bx bx-home'></i>
             <span>Home</span>
         </div>
     </a>
-    <a href="/reimbursement">
+    <a href="{{ route('reimbursement.index') }}">
         <div class="nav-item on-page">
             <i class="bx icon-gui-refund"></i>
             <span>Reimbursement</span>
@@ -38,7 +38,7 @@
                 <h2>Riwayat Reimbursement Anda</h2>
             </div>
 
-            <a href="/claim">
+            <a href="{{ route('claim.form') }}">
                 <button class="btn">
                     <i class="bx bx-plus-circle"></i>
                     <span>Tambah</span>
@@ -90,7 +90,7 @@
                         <span>{{ ucfirst($row->status) }}</span>
                         @endif
                     </td>
-                    <td><a href="/reimbursement/{{ $row->id }}">Detail</a></td>
+                    <td><a href="{{ route('reimbursement.detail', $row->id) }}">Detail</a></td>
                 </tr>
                 @endforeach
             </tbody>

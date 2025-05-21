@@ -3,20 +3,22 @@
 @section('title', 'Reimbursement Detail')
 
 @section('nav-menu')
+
 <nav>
-    <a href="/home">
+    <a href="{{ route('home') }}">
         <div class="nav-item">
             <i class='bx bx-home'></i>
             <span>Home</span>
         </div>
     </a>
-    <a href="/reimbursement">
+    <a href="{{ route('reimbursement.index') }}">
         <div class="nav-item on-page">
             <i class="bx icon-gui-refund"></i>
             <span>Reimbursement</span>
         </div>
     </a>
 </nav>
+
 @endsection
 
 @section('content')
@@ -37,7 +39,7 @@
     <section class="main-content shadow section-cards">
 
         <div class="content-head">
-            <a href="/reimbursement">
+            <a href="{{ route('reimbursement.index') }}">
                 <button class="btn">
                     <i class="bx bx-left-arrow-circle"></i>
                     <span>Kembali</span>
@@ -180,7 +182,7 @@
 
             @if($detail->status == "waiting")
             <span class="error" style="background-color:grey;padding: 10px;">Reimbursement {{ ucfirst($detail->status) }} Verification</span>
-            <form action="/cancelClaim" method="post">
+            <form action="{{ route('claim.cancel') }}" method="post">
                 @csrf
                 <input type="hidden" name="id" value="{{ $detail->id }}">
                 <button type="submit" value="cancel" name="status" class="btn" style="background-color: #F44336; max-width: fit-content;">
@@ -190,7 +192,7 @@
             </form>
             @elseif($detail->status == "accepted")
             <span class="error" style="background-color:#2196F3; padding: 10px;">Sedang diproses</span>
-            <form action="/cancelClaim" method="post">
+            <form action="{{ route('claim.cancel') }}" method="post">
                 @csrf
                 <input type="hidden" name="id" value="{{ $detail->id }}">
                 <button type="submit" value="cancel" name="status" class="btn" style="background-color: #F44336; max-width: fit-content;">

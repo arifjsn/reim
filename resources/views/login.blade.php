@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image" href="/assets/image/logo.png">
+    <link rel="icon" type="image" href="{{ asset('/assets/image/logo.png') }}">
     <title>Reimbursement App</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 </head>
 
 <body>
     <main>
-        <form action="/login" method="POST">
+        <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="center shadow" id="">
-                <img src="assets/image/logo.png" alt="" id="" style="max-width:150px;">
+                <img src="{{ asset('assets/image/logo.png') }}" alt="" id="" style="max-width:150px;">
                 @if ($errors->any())
                 <div class="error">
                     <ul>

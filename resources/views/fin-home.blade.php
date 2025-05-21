@@ -5,13 +5,13 @@
 @section('nav-menu')
 
 <nav>
-    <a href="/home">
+    <a href="{{ route('home') }}">
         <div class="nav-item on-page">
             <i class='bx bx-home'></i>
             <span>Home</span>
         </div>
     </a>
-    <a href="/reimbursement">
+    <a href="{{ route('reimbursement.index') }}">
         <div class="nav-item">
             <i class="bx icon-gui-refund"></i>
             <span>Reimbursement</span>
