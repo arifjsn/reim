@@ -123,7 +123,7 @@
                         <i class="bx bxs-file-archive"></i>
                         <span>Upload Bukti</span>
                     </div>
-                    <span>*file bukti disatukan menjadi .zip<br>kosongkan jika tidak ada.</span><br>
+                    <span>*file bukti disatukan menjadi .zip<br>*kosongkan jika tidak ada.</span><br>
                     <input type="file" name="bukti" id="" value="{{ old('bukti') }}" accept=".zip, .rar">
                 </div>
 

@@ -189,11 +189,19 @@
                 </button>
             </form>
             @elseif($detail->status == "accepted")
-            <span class="error" style="background-color:#dec733;padding: 10px;">Reimbursement {{ ucfirst($detail->status) }}, Please contact finance department to claiming your reimbursement</span>
+            <span class="error" style="background-color:#2196F3; padding: 10px;">Sedang diproses</span>
+            <form action="/cancelClaim" method="post">
+                @csrf
+                <input type="hidden" name="id" value="{{ $detail->id }}">
+                <button type="submit" value="cancel" name="status" class="btn" style="background-color: #F44336; max-width: fit-content;">
+                    <i class="bx bx-x-circle"></i>
+                    Batalkan Pengajuan
+                </button>
+            </form>
             @elseif($detail->status == "declined")
-            <span class="error" style="background-color:#F44336;padding: 10px;">Reimbursement {{ ucfirst($detail->status) }}</span>
+            <span class="error" style="background-color:#F44336; padding: 10px;">Reimbursement {{ ucfirst($detail->status) }}</span>
             @elseif($detail->status == "claimed")
-            <span class="error" style="background-color:#66CDAA;padding: 10px;">Reimbursement {{ ucfirst($detail->status) }}</span>
+            <span class="error" style="background-color:#66CDAA; padding: 10px;">Reimbursement diterima</span>
             @endif
 
         </div>

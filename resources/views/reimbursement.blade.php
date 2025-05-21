@@ -69,14 +69,27 @@
                 @foreach ($reimbursement as $row)
                 <tr>
                     <td>{{ $num++ }}</td>
-                    <td>@if($row->kategori)
+                    <td>
+                        @if($row->kategori)
                         {{ $row->kategori == "perjalanan" ? "Perjalanan Dinas" : ($row->kategori == "medis" ? "Perawatan Medis" : "Operasional Bisnis") }}
                         @else
                         Tidak ada kategori
                         @endif
                     </td>
                     <td>{{ $row->tanggal }}</td>
-                    <td>{{ ucfirst($row->status) }}</td>
+                    <td>
+                        @if(strtolower($row->status) == 'accepted')
+                        <button class="btn btn-sm" style="background-color:#2196F3; color:white; padding:2px 8px; font-size:12px; border:none; border-radius:4px;">
+                            In Progress
+                        </button>
+                        @elseif(strtolower($row->status) == 'claimed')
+                        <button class="btn btn-sm" style="background-color:#4CAF50; color:white; padding:2px 8px; font-size:12px; border:none; border-radius:4px;">
+                            Done
+                        </button>
+                        @else
+                        <span>{{ ucfirst($row->status) }}</span>
+                        @endif
+                    </td>
                     <td><a href="/reimbursement/{{ $row->id }}">Detail</a></td>
                 </tr>
                 @endforeach

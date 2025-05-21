@@ -9,9 +9,9 @@
     <title>@yield('title')</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/addition.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link href="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
-    <script src="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.js" type="text/javascript"></script>
+    <link href='/assets/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    <link href="/assets/css/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
+    <script src="/assets/css/vanilla-dataTables.min.js" type="text/javascript"></script>
 </head>
 
 <body style="display: flex;flex-wrap: wrap;overflow-x: hidden;">
@@ -35,7 +35,7 @@
         <a href="/logout">
             <button class="btn">
                 <i class="bx bx-log-out"></i>
-                <span>Logout</span>
+                <span>Keluar</span>
             </button>
         </a>
 
