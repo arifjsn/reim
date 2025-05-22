@@ -123,7 +123,7 @@ class ReimbursementController extends Controller
                 }
             });
 
-            return redirect('/reimbursement')->with('success', 'Reimbursement anda telah berhasil diajukan');
+            return redirect()->route('reimbursement.index')->with('success', 'Reimbursement anda telah berhasil diajukan');
         } catch (ValidationException $e) {
 
             return redirect()->back()->withErrors($e->getMessage())->withInput();
