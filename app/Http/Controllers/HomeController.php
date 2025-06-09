@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \Auth;
+use Illuminate\Support\Facades\Auth;
+
 class HomeController extends Controller
 {
-    //
-    public function index(){
-        if(Auth::user()->department->nama_departemen == "HR"){
-            return view('/hr-home');
-        } elseif(Auth::user()->department->nama_departemen == "FINANCE") {
-            return view('/fin-home');
+    public function index()
+    {
+        $department = Auth::user()->department->nama_departemen ?? null;
+
+        if ($department === "HR") {
+            return view('hr-home');
+        } elseif ($department === "FINANCE") {
+            return view('fin-home');
         } else {
-            return view('/home');
+            return view('home');
         }
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    //
     public function index()
     {
         return view('login');
@@ -15,32 +14,31 @@ class AuthController extends Controller
 
     public function authenticate(Request $request)
     {
-        $pesan = [
+        $messages = [
             'required' => 'Kolom :attribute harus diisi'
         ];
 
         $credentials = $request->validate([
             'email' => 'required',
             'password' => 'required'
-        ], $pesan);
+        ], $messages);
 
-
-        if (auth()->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/reimbursement');
+            return redirect()->intended(route('reimbursement.index'));
         }
 
-        return back()->withErrors('Email atau Password tidak sesuai');
+        return back()->withErrors([
+            'login' => 'Email atau Password tidak sesuai'
+        ])->withInput();
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        request()->session()->invalidate();
-
-        request()->session()->regenerateToken();
-
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

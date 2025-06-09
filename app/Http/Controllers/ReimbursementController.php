@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use \Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Reimbursement;
 use App\Models\ReimbursementDetail;
 use Carbon\Carbon;
@@ -12,50 +12,44 @@ use Illuminate\Validation\ValidationException;
 
 class ReimbursementController extends Controller
 {
-    //
     public function index()
     {
+        $user = Auth::user();
+        $department = $user->department->nama_departemen ?? null;
 
-
-        if (Auth::user()->department->nama_departemen == "HR") {
-
+        if ($department === "HR") {
             $data = Reimbursement::orderBy('status')->get();
-            return view('/hr-reimbursement', ['reimbursement' => $data]);
-        } elseif (Auth::user()->department->nama_departemen == "FINANCE") {
-
+            return view('hr-reimbursement', ['reimbursement' => $data]);
+        } elseif ($department === "FINANCE") {
             $data = Reimbursement::where(function ($query) {
-                $query->where('status', '=', 'accepted')
-                    ->orWhere('status', '=', 'claimed');
+                $query->where('status', 'accepted')
+                      ->orWhere('status', 'claimed');
             })->orderBy('status')->get();
-            return view('/fin-reimbursement', ['reimbursement' => $data]);
+            return view('fin-reimbursement', ['reimbursement' => $data]);
         } else {
-
-            $data = Reimbursement::where('id_user', Auth::user()->nip)->get()->map(function ($item) {
+            $data = Reimbursement::where('id_user', $user->nip)->get()->map(function ($item) {
                 $item->tanggal = $item->created_at->format('d F Y');
                 return $item;
             });
-
             return view('reimbursement', ['reimbursement' => $data]);
         }
     }
 
     public function claimFormFilled($id)
     {
+        $data = Reimbursement::find($id);
 
-        $data = Reimbursement::where('id', $id)->first();
-
-        if ($data == null) {
-            return redirect('/reimbursement');
+        if (!$data) {
+            return redirect()->route('reimbursement.index');
         }
 
-        if (Auth::user()->department->nama_departemen == "HR") {
+        $department = Auth::user()->department->nama_departemen ?? null;
 
+        if ($department === "HR") {
             return view('hr-claim-form-filled', ['detail' => $data]);
-        } elseif (Auth::user()->department->nama_departemen == "FINANCE") {
-
+        } elseif ($department === "FINANCE") {
             return view('fin-claim-form-filled', ['detail' => $data]);
         } else {
-
             return view('claim-form-filled', ['detail' => $data]);
         }
     }
@@ -69,7 +63,6 @@ class ReimbursementController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-
                 $request->validate([
                     'kategori' => 'nullable',
                     'from' => 'required',
@@ -86,37 +79,33 @@ class ReimbursementController extends Controller
                     'status' => 'accepted'
                 ];
 
-                //Menyimpan Data Reimbursement dan mendapatkan id row nya
+                // Simpan data reimbursement dan dapatkan id-nya
                 $id = Reimbursement::create($reimbursementValue)->id;
 
-                //Upload file jika ada
+                // Upload file jika ada
                 if ($request->hasFile('bukti')) {
                     $file = $request->file('bukti');
                     $setNamaFile = $id . Auth::user()->nip . "." . $file->getClientOriginalExtension();
-                    $path = $file->storeAs('public/bukti', $setNamaFile);
+                    $file->storeAs('public/bukti', $setNamaFile);
 
-                    //menyimpan nama file pada database
+                    // Simpan nama file pada database
                     Reimbursement::where('id', $id)->update(['bukti' => $setNamaFile]);
                 }
-                //Menyimpan data detail reimbursement
+
+                // Simpan data detail reimbursement
                 $jumlahRow = count($request->tanggal);
                 for ($i = 0; $i < $jumlahRow; $i++) {
-
                     $request->validate([
                         'tanggal' => 'required',
                         'deskripsi' => 'required',
                         'pengeluaran' => 'required'
                     ]);
 
-                    $tanggal = $request->tanggal;
-                    $deskripsi = $request->deskripsi;
-                    $pengeluaran = $request->pengeluaran;
-
                     $detailValue = [
                         'id_reimbursement' => $id,
-                        'tanggal' => $tanggal[$i],
-                        'deskripsi' => $deskripsi[$i],
-                        'pengeluaran' => $pengeluaran[$i]
+                        'tanggal' => $request->tanggal[$i],
+                        'deskripsi' => $request->deskripsi[$i],
+                        'pengeluaran' => $request->pengeluaran[$i]
                     ];
 
                     ReimbursementDetail::create($detailValue);
@@ -125,60 +114,45 @@ class ReimbursementController extends Controller
 
             return redirect()->route('reimbursement.index')->with('success', 'Reimbursement anda telah berhasil diajukan');
         } catch (ValidationException $e) {
-
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         } catch (\Exception $e) {
-
             return redirect()->back()->withErrors("Maaf Terjadi Kesalahan, Claim Gagal Diajukan")->withInput();
         }
     }
 
     public function verification(Request $request)
     {
-        // $reimbursement = Reimbursement::where('id', $request->id)->first();
-        // $statusVal = [
-        //     'status' => $request->status
-        // ];
-        // $reimbursement->update($statusVal);
-        // return redirect('/reimbursement');
+        // Implementasi verifikasi jika diperlukan
     }
 
     public function markClaimed(Request $request)
     {
-        // $reimbursement = Reimbursement::where('id', $request->id)->first();
-        // $statusVal = [
-        //     'status' => $request->status
-        // ];
-        // $reimbursement->update($statusVal);
-        // return redirect('/reimbursement');
+        // Implementasi mark claimed jika diperlukan
     }
-
 
     public function updateStatus(Request $request)
     {
-        $reimbursement = Reimbursement::where('id', $request->id)->first();
-        $statusVal = [
-            'status' => $request->status
-        ];
-        $reimbursement->update($statusVal);
-        return redirect('/reimbursement');
+        $reimbursement = Reimbursement::find($request->id);
+        if ($reimbursement) {
+            $reimbursement->update(['status' => $request->status]);
+        }
+        return redirect()->route('reimbursement.index');
     }
 
     public function cancelClaim(Request $request)
     {
-        //Get Data
-        $reimbursement = Reimbursement::where('id', $request->id)->first();
+        $reimbursement = Reimbursement::find($request->id);
 
-        //Delete File Bukti
-        $path = storage_path('app/public/bukti/' . $reimbursement->bukti);
-
-        if (file_exists($path)) {
-            unlink($path);
+        if ($reimbursement) {
+            // Hapus file bukti jika ada
+            $path = storage_path('app/public/bukti/' . $reimbursement->bukti);
+            if ($reimbursement->bukti && file_exists($path)) {
+                unlink($path);
+            }
+            // Hapus data reimbursement
+            $reimbursement->delete();
         }
 
-        //Delete Row
-        $reimbursement->delete();
-
-        return redirect('/reimbursement');
+        return redirect()->route('reimbursement.index');
     }
 }

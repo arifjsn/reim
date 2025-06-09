@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use \Auth;
+use Illuminate\Support\Facades\Auth;
 
 class CheckDepartment
 {
@@ -13,43 +13,33 @@ class CheckDepartment
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  mixed ...$departments
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next, ...$departments)
     {
         $user = Auth::user();
         if (!$user) {
-            return redirect('/login');
+            return redirect()->route('login');
         }
 
-/* 
-*   jika yang diminta pegawai berarti user.departement selain HR dan FINANCE Next
-*   jika HR dan FINANCE mengunjungi, akan ke /home
-*   jika yang diminta HR / Finance maka disesuaikan dengan user.depart, Jika sesuai Next
-*   jika selain HR & FINANCE mengunjungi, akan ke /home
-*/
-       
+        $userDepartment = $user->department->nama_departemen ?? null;
 
         foreach ($departments as $department) {
-            if($department == 'PEGAWAI'){
-                if ($user->department->nama_departemen != "HR" && $user->department->nama_departemen != "FINANCE") {
+            if ($department === 'PEGAWAI') {
+                // Jika user bukan HR atau FINANCE, izinkan akses
+                if ($userDepartment !== "HR" && $userDepartment !== "FINANCE") {
                     return $next($request);
                 }
             } else {
-                if ($user->department->nama_departemen == $department) {
+                // Jika user sesuai dengan department yang diminta, izinkan akses
+                if ($userDepartment === $department) {
                     return $next($request);
                 }
             }
         }
-    
 
-        return redirect('/home');
+        // Jika tidak memenuhi syarat, redirect ke home (menggunakan route)
+        return redirect()->route('home');
     }
 }
-
-
-// elseif($department == 'PEGAWAI'){
-//     if ($user->department->nama_departemen == "HR" || $user->department->nama_departemen == "FINANCE") {
-//         return $next($request);
-//     }
-// } 
